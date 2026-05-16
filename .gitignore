@@ -5,6 +5,7 @@ __pycache__/
 *.egg-info/
 venv/
 .venv/
+.eggs/
 
 # IDE
 .vscode/
@@ -20,3 +21,27 @@ Thumbs.db
 # Secrets
 *.env
 password.txt
+
+# Big binary artifacts (jars, etc.)
+*.jar
+*.tar.gz
+*.zip
+!gradle/wrapper/gradle-wrapper.jar
+
+# Spark / Hadoop
+metastore_db/
+derby.log
+spark-warehouse/
+tmp/
+checkpoint/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Airflow
+airflow/logs/
+airflow/dags/
+
+# Virtual environments
+pip-log.txt
+pip-delete-this-directory.txt
