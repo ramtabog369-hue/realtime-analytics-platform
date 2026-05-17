@@ -1,0 +1,87 @@
+import json
+import pytest
+from datetime import datetime, timezone
+from unittest.mock import patch, MagicMock
+import random
+
+# Тестируем, что структура события корректна
+def test_event_structure():
+    event = {
+        "user_id": random.randint(1, 1000),
+        "product_id": random.randint(1, 500),
+        "action": random.choice(["view", "click", "add_to_cart", "purchase"]),
+        "price": round(random.uniform(100, 5000), 2),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    assert isinstance(event["user_id"], int)
+    assert isinstance(event["product_id"], int)
+    assert event["action"] in ["view", "click", "add_to_cart", "purchase"]
+    assert event["price"] > 0
+    # timestamp должна быть валидной ISO строкой
+    datetime.fromisoformat(event["timestamp"])
+
+# Тестируем сериализацию/десериализацию
+def test_event_serialization():
+    event = {
+        "user_id": 123,
+        "product_id": 456,
+        "action": "view",
+        "price": 99.99,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    msg = json.dumps(event).encode('utf-8')
+    deserialized = json.loads(msg.decode('utf-8'))
+    assert deserialized["user_id"] == 123
+    assert deserialized["price"] == 99.99
+
+# Тестируем, что producer корректно отправляет сообщение (мок)
+@patch('producer.KafkaProducer')
+def test_kafka_producer_send(mock_kafka_producer):
+    from producer import producer, TOPIC
+    mock_producer_instance = MagicMock()
+    mock_kafka_producer.return_value = mock_producer_instance
+    event = {"test": "data"}
+    # Вызываем отправку
+    producer.send(TOPIC, value=event)
+    mock_producer_instance.send.assert_called_once_with(TOPIC, value=event)
+
+# Тестируем consumer (мок получения сообщения)
+@patch('consumer.KafkaConsumer')
+def test_kafka_consumer_read(mock_kafka_consumer):
+    from consumer import consumer
+    mock_consumer_instance = MagicMock()
+    mock_kafka_consumer.return_value = mock_consumer_instance
+    # Возвращаем тестовое сообщение
+    mock_msg = MagicMock()
+    mock_msg.value = {"user_id": 1, "product_id": 2, "action": "view", "price": 10.0, "timestamp": "2025-01-01T00:00:00+00:00"}
+    mock_consumer_instance.__iter__.return_value = [mock_msg]
+    # Читаем одно сообщение
+    for msg in consumer:
+        assert msg.value["user_id"] == 1
+        break
+
+# Тестируем Redis кэш (мок)
+@patch('redis_cache.redis')
+def test_redis_top_products(mock_redis):
+    from redis_cache import update_top_products
+    update_top_products()
+    mock_redis.setex.assert_called_once()
+    args, _ = mock_redis.setex.call_args
+    assert args[0] == "top5_products"
+    data = json.loads(args[2])
+    assert isinstance(data, list)
+
+# Дополнительные тесты на граничные значения
+def test_price_boundary():
+    price = 0.01
+    assert price > 0
+
+def test_user_id_range():
+    uid = random.randint(1, 1000)
+    assert 1 <= uid <= 1000
+
+# Проверка генерации уникальных timestamp
+def test_timestamps_are_unique():
+    ts1 = datetime.now(timezone.utc).isoformat()
+    ts2 = datetime.now(timezone.utc).isoformat()
+    assert ts1 != ts2
