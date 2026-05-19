@@ -1,0 +1,5 @@
+﻿FROM python:3.12-slim
+WORKDIR /app
+COPY bybit_producer.py /app/
+RUN pip install pybit kafka-python
+CMD ["python", "/app/bybit_producer.py"]

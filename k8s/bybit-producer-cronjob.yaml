@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: bybit-producer
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: producer
+            image: cryptoflow-bybit:v6
+            imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
