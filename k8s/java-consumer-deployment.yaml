@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java-consumer
+  template:
+    metadata:
+      labels:
+        app: java-consumer
+    spec:
+      containers:
+      - name: java-consumer
+        image: cryptoflow-java-consumer:v1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: BOOTSTRAP_SERVERS
+          value: "host.docker.internal:9092"

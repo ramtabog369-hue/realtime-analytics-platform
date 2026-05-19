@@ -1,0 +1,13 @@
+﻿⚡ CryptoFlow Terminal: оток данных ожил!
+
+Bybit Producer отправляет сделки BTCUSDT в Kafka.
+ена: 76982$, объём: до 0.2 BTC.
+анные идут стабильно, без ошибок.
+
+лючевая победа: разобрался с форматом WebSocket,
+научился дебажить потоковые данные в реальном времени.
+
+автра — Java Crash Course: первый Kafka Consumer.
+ затем Kubernetes с новыми силами!
+
+#bybit #kafka #docker #dataengineering #crypto
