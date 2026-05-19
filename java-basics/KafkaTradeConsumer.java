@@ -4,6 +4,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
+import java.time.Duration;
 
 public class KafkaTradeConsumer {
     public static void main(String[] args) {
