@@ -1,0 +1,22 @@
+name: Java CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'corretto'
+    - name: Download Kafka clients
+      run: cd java-basics && wget https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/3.6.0/kafka-clients-3.6.0.jar
+    - name: Download JUnit
+      run: cd java-basics && wget https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.0/junit-platform-console-standalone-1.10.0.jar
+    - name: Compile
+      run: cd java-basics && javac -cp "kafka-clients-3.6.0.jar:junit-platform-console-standalone-1.10.0.jar" *.java
+    - name: Run tests
+      run: cd java-basics && java -jar junit-platform-console-standalone-1.10.0.jar --class-path ".:kafka-clients-3.6.0.jar" --select-class KafkaTradeConsumerTest
