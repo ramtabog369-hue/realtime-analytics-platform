@@ -2,7 +2,7 @@
 
 # Real-Time Analytics Platform
 
-латформа потоковой обработки и аналитики событий (clickstream) в реальном времени.
+Платформа потоковой обработки и аналитики событий (clickstream) в реальном времени.
 
 ## Стек
 - Python (Producer, Consumer, Airflow)
@@ -13,5 +13,5 @@
 - ClickHouse, PostgreSQL, Redis
 - GitHub Actions (CI)
 
-## рхитектура
+## Архитектура
 Producer → Kafka → Spark Streaming → ClickHouse / Delta Lake
